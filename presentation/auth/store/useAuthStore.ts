@@ -39,13 +39,16 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
     return get().changeStatus(resp?.token, resp?.user);
   },
+  
   checkStatus: async () => {
     const resp = await authCheckStatus();
 
     get().changeStatus(resp?.token, resp?.user);
   },
+
   logout: async () => {
     // TODO: CLEAR DEL TOKEN DEL SECURE STORAGE
     set({ status: "unauthenticated", token: undefined, user: undefined });
   },
+  
 }));
