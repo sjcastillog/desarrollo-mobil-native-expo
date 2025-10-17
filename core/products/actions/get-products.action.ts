@@ -1,0 +1,18 @@
+import { API_URL, productsApi } from "@/core/api/productsApi"
+import { type ProductI } from "../interfaces/product.interface"
+
+export const getProducts = async (limit=20, offset=0):Promise<ProductI[]>=>{
+
+    try{
+        const { data } = await productsApi.get<ProductI[]>('/products', {
+            params:{
+                limit,
+                offset
+            }
+        })
+
+        return data.map((product)=>({...product, images:product.images.map(image=> `${API_URL}/files/products/${image}`)}))
+    }catch(error){
+        throw new Error('unable load products')
+    }
+}

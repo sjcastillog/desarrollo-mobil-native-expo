@@ -1,5 +1,6 @@
-import { productsApi } from "../api/productsApi";
+import { NewUserI } from "@/presentation/auth/store/useAuthStore";
 import { UserI } from "../interface";
+import { productsApi } from "@/core/api/productsApi";
 
 export interface AuthResponseI {
   id: string;
@@ -34,6 +35,24 @@ export const authLogin = async (email: string, password: string) => {
     const { data } = await productsApi.post<AuthResponseI>("/auth/login", {
       email,
       password,
+    });
+
+    return returnUserToken(data);
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+export const authRegister = async (data:NewUserI) => {
+  let { email, fullName, password} = data;
+  email = email.toLowerCase();
+
+  try {
+    const { data } = await productsApi.post<AuthResponseI>("/auth/register", {
+      email,
+      password,
+      fullName,
     });
 
     return returnUserToken(data);

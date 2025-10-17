@@ -11,12 +11,21 @@ import React, { useEffect } from "react";
 import "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useThemeColor } from "@/presentation/theme/hooks/use-theme-color";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export const unstable_settings = {
   anchor: "(tabs)",
 };
 
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -42,17 +51,19 @@ export default function RootLayout() {
     <GestureHandlerRootView
       style={{ backgroundColor: backgroundColor, flex: 1 }}
     >
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-          {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} /> */}
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          >
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

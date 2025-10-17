@@ -1,10 +1,13 @@
+import { useAuthStore } from "@/presentation/auth/store/useAuthStore";
 import { ThemedText } from "@/presentation/theme/components/themed-text";
 import ThemeButton from "@/presentation/theme/components/ui/theme-button";
 import ThemeLink from "@/presentation/theme/components/ui/theme-link";
 import ThemeTextInput from "@/presentation/theme/components/ui/theme-text-input";
 import { useThemeColor } from "@/presentation/theme/hooks/use-theme-color";
-import React from "react";
+import { router } from "expo-router";
+import React, { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   ScrollView,
   useWindowDimensions,
@@ -12,8 +15,36 @@ import {
 } from "react-native";
 
 const RegisterScreen = () => {
-  const { width, height } = useWindowDimensions();
+  const { height } = useWindowDimensions();
+  const { register } = useAuthStore();
   const backgroundColor = useThemeColor({}, "background");
+
+  const [isPosting, setIsPosting] = useState(false);
+
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    fullName: "",
+  });
+
+  const onRegister = async () => {
+    const { email, password, fullName } = form;
+    if (email.length === 0 || password.length === 0) {
+      return;
+    }
+
+    setIsPosting(true);
+
+    const wasSuccessful = await register(form);
+    setIsPosting(false);
+
+    if (wasSuccessful) {
+      router.replace("/(products-app)/(home)");
+      return;
+    }
+
+    Alert.alert("Error", "Usuario o Password Incorrectos");
+  };
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -31,25 +62,37 @@ const RegisterScreen = () => {
             placeholder="Nombre Completo"
             autoCapitalize="words"
             icon="person-outline"
+            value={form.fullName}
+            onChangeText={(text) => setForm({ ...form, fullName: text })}
           />
           <ThemeTextInput
             placeholder="Correo Electronico"
             keyboardType="email-address"
             autoCapitalize="none"
             icon="mail-outline"
+            value={form.email}
+            onChangeText={(text) => setForm({ ...form, email: text })}
           />
           <ThemeTextInput
             placeholder="Password"
             secureTextEntry
             autoCapitalize="none"
             icon="lock-closed-outline"
+            value={form.password}
+            onChangeText={(text) => setForm({ ...form, password: text })}
           />
         </View>
 
         <View style={{ marginTop: 10 }}></View>
 
         {/* Boton */}
-        <ThemeButton icon="arrow-forward-outline">Crear Cuenta</ThemeButton>
+        <ThemeButton
+          icon="arrow-forward-outline"
+          onPress={onRegister}
+          disabled={isPosting}
+        >
+          Crear Cuenta
+        </ThemeButton>
 
         <View style={{ marginTop: 50 }}></View>
 

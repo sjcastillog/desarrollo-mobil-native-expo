@@ -28,7 +28,6 @@ const LoginScreen = () => {
 
   const onLogin = async () => {
     const { email, password } = form;
-    console.log(form)
     if (email.length === 0 || password.length === 0) {
       return;
     }
