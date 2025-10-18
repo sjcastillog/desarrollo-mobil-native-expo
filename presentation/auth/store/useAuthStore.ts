@@ -20,7 +20,7 @@ export interface AuthState {
   user?: UserI;
 
   login: (email: string, password: string) => Promise<boolean>;
-  register: (data: NewUserI) => Promise<string>;
+  register: (data: NewUserI) => Promise<boolean>;
   checkStatus: () => Promise<void>;
   logout: () => Promise<void>;
   changeStatus: (token?: string, user?: UserI) => Promise<boolean>;
@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   register: async (data: NewUserI) => {
     const resp = await authRegister(data);
 
-    return resp?.token!;
+    return get().changeStatus(resp?.token, resp?.user);
   },
 
   checkStatus: async () => {

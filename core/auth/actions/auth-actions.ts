@@ -1,6 +1,6 @@
+import { productsApi } from "@/core/api/productsApi";
 import { NewUserI } from "@/presentation/auth/store/useAuthStore";
 import { UserI } from "../interface";
-import { productsApi } from "@/core/api/productsApi";
 
 export interface AuthResponseI {
   id: string;
@@ -54,6 +54,7 @@ export const authRegister = async (data:NewUserI) => {
       password,
       fullName,
     });
+
 
     return returnUserToken(data);
   } catch (err) {
