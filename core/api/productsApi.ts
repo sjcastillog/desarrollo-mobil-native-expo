@@ -16,7 +16,6 @@ const productsApi = axios.create({
 });
 
 productsApi.interceptors.request.use( async(config) => {
-
   // Verificar si tenemos token en el secure storage
 
   const token = await SecureStorageAdapter.getItem('token');
